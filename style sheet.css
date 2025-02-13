@@ -1,0 +1,15 @@
+h1{text-align: center; background-color: antiquewhite; height: 80px; line-height: 80px;}
+h3{color:grey;}
+#catalogue{
+    margin: 10px auto;
+    width: 700px;
+}
+#content{
+    margin: 10px auto;
+    width: 800px;
+    border: 1px solid gray;
+    padding: 20px 80px;
+}
+a{text-decoration: none; cursor: pointer;}
+a:hover{color: red;}
+.central{text-align: center; text-indent: 0em;}
