@@ -1,0 +1,185 @@
+body{
+    margin: 0;
+    padding: 0;
+    /* min-height: 100vh; */
+}
+.logo{
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    font-size: 16px;
+    z-index: 1;
+} 
+.logo:hover{
+    cursor: pointer;
+}
+.qrcode.active{
+    opacity: 1;
+    visibility: visible;
+}
+.qrcode{
+    position: absolute;
+    top: 70px;
+    left: 0px;
+    width: 150px;
+    height: 150px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    border: 2px solid #eee;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 100;    /* 确保悬浮层在最前 */
+}
+.logo ul{
+    list-style: none;
+    position: absolute;
+    top: -5px;
+    left: 25px;
+}
+.logo ul li{
+    height: 20px;
+    text-align: left;
+    text-shadow: 2px 2px 1px #9999;
+}
+h1{
+    text-align: center; 
+    letter-spacing: 2px;
+    color: black;
+    background-color: antiquewhite; 
+    height: 80px; line-height: 80px;
+    /* display: flex; justify-content: center;align-items: center; */
+    margin: 0px auto 50px;
+    position: relative;
+    z-index: 0;
+}
+h3{
+    color:grey;
+}
+.title{
+    margin: 0 auto;
+    width: auto;
+    height: 80px;
+    text-align: center; line-height: 80px;
+    font-weight: bold;
+    font-size: 32px;
+    letter-spacing: 2px;
+    background-color: white;
+}
+.title a{
+    position: fixed;
+    right: 0px;
+    top: 0px;
+}
+.title a:hover{
+    height: 78px;
+    border: 1px solid antiquewhite;
+}
+.content{
+    margin: 30px auto;
+    width: 940px;
+    border: 1px solid gray;
+    padding: 20px 80px;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+.central{
+    text-align: center; 
+    text-indent: 0em;
+}
+#timeElement{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    padding: 10px;
+    color:grey;
+    font-weight:500;
+}
+#welcome{
+    margin-top: 120px;
+    margin-bottom: 80px;
+    text-align: center;
+    font-size: 30px;
+    color:grey;
+}
+#selection{
+    list-style: none;
+    position: relative;
+    /* background-color: rgb(131, 44, 203); */
+    width: auto;
+    padding-bottom: 300px;
+    text-align: center; 
+}
+#study{
+    width: 320px;
+    height: 140px;
+    padding-top: 60px;
+    position: absolute;
+    left: 50%;
+    transform: translate(-130%);
+    font-size: 30px;                                                                         
+    color: gray;
+    border-radius: 1rem;
+    background-color: hsla(0, 0%, 100%, .5);
+    box-shadow: 0 0 0 1px #f1f5f9, 0 2px 4px rgba(0, 0, 0, .05), 0 12px 24px rgba(0, 0, 0, .05);
+}
+#experiment{
+    width: 320px;
+    height: 140px;
+    padding-top: 60px;
+    position: absolute;
+    left: 50%;
+    transform: translate(30%);
+    font-size: 30px;
+    color: gray;
+    border-radius: 1rem;
+    background-color: hsla(0, 0%, 100%, .5);
+    box-shadow: 0 0 0 1px #f1f5f9, 0 2px 4px rgba(0, 0, 0, .05), 0 12px 24px rgba(0, 0, 0, .05);
+}
+#experiment:hover,#study:hover{
+    color: black;
+}
+#catalogue{
+    margin: 0px auto;
+    width: 700px;
+    letter-spacing: 1px;
+    box-sizing: border-box;
+}
+#catalogue a{
+    font-weight: bold;
+    font-size: 18px;
+}
+#catalogue a:hover{
+    color:#a18cd1;
+}
+a{
+    text-decoration: none; 
+    color: black;
+    cursor: pointer;
+}
+footer{
+    text-align: center;
+    margin-bottom: 0px;
+    text-indent: 0px;
+    background-image: linear-gradient(180deg,white,#ffecd2);
+    padding-bottom: 10px;
+    padding-top: 20px;
+    margin-top: 50px;
+    
+}
+#footer1{
+    text-align: center;
+    text-indent: 0px;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+    padding-top: 30px;
+    padding-bottom: 10px;
+    margin-top: 40px;
+    color: grey 
+}
+#footer1 a{
+    color: grey;
+}
+#footer1 a:hover{
+    color: black;
+}
