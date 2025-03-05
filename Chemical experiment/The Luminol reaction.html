@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鲁米诺反应</title>
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../style sheet.css">
+</head>
+<body>
+    <a href="../index.html" class="">
+        <div class="logo">
+            <img src="../Icon/Logo1.jpg" width="60px" alt="玟喆生物">
+            <ul>
+                <li>WZ</li>
+                <li>Biotech</li>
+            </ul>
+        </div>
+    </a>
+    <div class="title">
+        鲁米诺反应
+        <a href="../Experimental catalogue.html"><img src="../Icon/Experiment.jpg" height="78px" alt="返回实验菜单"></a>
+    </div>
+    <div class="content">
+        <p><strong>实验原理：</strong></p>
+        <p>碱性条件下鲁米诺去质子生成双负离子，并与其烯醇式结构处于平衡状态。次氯酸或过氧化氢产生的活性氧可以与去质子的鲁米诺反应生成氮气和激发态的双负离子产物，其从激发态回到基态时会放出光子产生荧光</p>
+        <p class="central"><img src="./Chemical image/Lumonol reaction.png" alt="鲁米诺反应式" width="500" title="鲁米诺试剂与活性氧反应生成激发态的双负离子产物"></p>
+        <p class="central">Figure. 鲁米诺与活性氧在碱性条件下反应</p>
+        <p><strong>实验试剂：</strong></p>
+        <p>鲁米诺，NaOH，5%次氯酸钠溶液</p>
+        <p><strong>实验流程:</strong></p>
+        <p>1. 量取100ml的5%次氯酸钠溶液并将其倒入500ml烧杯中</p>
+        <p>2. 称量0.2g鲁米诺溶于250ml水中，加入15克氢氧化钠，搅拌至完全溶解 </p>
+        <p>3. 在暗处将溶解后的鲁米诺溶液缓慢倒入次氯酸钠溶液中即可观察到明显的荧光反应</p>
+        <p><strong>实验结果：</strong></p>
+        <p>反应产生明显的蓝色荧光；实际应用中鲁米诺反应使用过氧化氢作为氧化剂，血液中的血红蛋白含有血红素基团，其中的铁离子（Fe²⁺/Fe³⁺）是反应的催化剂，可以大幅加速氧化过程产生可以蓝光，所以该反应也成为了法医学中血迹检测的经典方法</p>
+        <div class="video-container">
+            <div class="video-cover" onclick="playVideo()">
+                鲁米诺反应
+            </div>
+            <video
+                id="myVideo"
+                controls
+                muted
+            >
+              <source src="./Video/Luminol reaction.mp4" type="video/mp4">
+              <p>请升级浏览器或尝试其他设备观看视频</p>
+            </video>
+        </div>
+        <p class="central">Video. 鲁米诺与次氯酸钠混合后产生蓝色荧光</p>
+    </div>
+    <footer>
+        <span style="color: brown;">说明：内容仅供参考，请自行确认其准确性和可靠性。</span> <br>
+        如有疑问请发送邮件至<a href="mailto:service@wzbiotech.cn">service@wzbiotech.cn</a> <br>
+        &copy;上海玟喆生物科技有限公司 <br>
+        地址：上海市青浦区公园路348号7层
+    </footer>
+    <script>
+        const video = document.getElementById('myVideo');
+        const cover = document.querySelector('.video-cover');
+
+        function playVideo() {
+            // 隐藏封面
+            cover.classList.add('hide-cover');
+            // 开始播放视频
+            video.play();
+        }
+
+        // 当视频结束时显示封面
+        video.addEventListener('ended', () => {
+            cover.classList.remove('hide-cover');
+        });
+    </script>
+</body>
+</html>
