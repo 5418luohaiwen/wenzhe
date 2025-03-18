@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心电图分析</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../style sheet.css">
+</head>
+<body>
+    <a href="../../index.html" class="">
+        <div class="logo">
+            <img src="../../Icon/Logo2.jpg" width="60px" alt="玟喆生物">
+            <ul>
+                <li>WZ</li>
+                <li>Biotech</li>
+            </ul>
+        </div>
+    </a>
+    <div class="title"> 
+        心电图分析
+        <a href="../Knowledge catalogue.html"><img src="../../Icon/Experiment.jpg" height="78px" alt="返回实验菜单"></a>
+    </div>
+    <div style="position: absolute; left: 50%; transform: translate(-50%);margin-top: 100px;">
+        <canvas id="ECG" width="910" height="310"></canvas>
+        <button onclick="toggleAnimation()" id="pauseBtn">暂停打印</button>
+    </div>
+</body>
+<script defer>
+    //获取canvas元素
+    const canvas_ECG = document.getElementById("ECG");
+    const ctx1 = canvas_ECG.getContext("2d")
+
+     //定义波动数组和噪音计数器
+     var noise1 = 0;
+         noise2 = 0;
+         noise3 = 0;
+         noise4 = 0;
+         noise5 = 0;
+         noise6 = 0;
+         noise7 = 0;
+         arr1 = [];
+         arr2 = [];
+         arr3 = [];
+         arr4 = [];
+         arr5 = [];
+         arr6 = [];
+         arr7 = [];
+
+    // 添加控制动画的变量
+    let offset = 0;          // 水平偏移量
+    let animationId = null;  // 存储动画帧ID（用于停止动画）
+    let isPaused = false;
+    
+    //添加波动数列
+    //基线噪声 正负3像素
+    function createNoise(){
+        for (let i = 0; i < 180; i++) {
+        arr1.push(3*(Math.random() * 2 - 1));
+        };
+        //P波浮动 正负8像素
+        for (let i = 0; i < 21; i++) {
+        arr2.push(8*(Math.random() * 2 - 1));
+        }
+        //Q波浮动 垂直正10像素
+        for (let i = 0; i < 21; i++) {
+        arr3.push(10*Math.random());
+        }
+        //R波浮动 水平正负6像素 垂直60像素
+        for (let i = 0; i < 21; i++) {
+        arr4.push(5*(Math.random() * 2 - 1));
+        }
+        //S波浮动 垂直10像素 终点5像素
+        for (let i = 0; i < 21; i++) {
+        arr5.push(5*(Math.random() * 2 - 1));
+        }
+        //T波浮动 两个控制点和起点
+        for (let i = 0; i < 21; i++) {
+        arr6.push(2*(Math.random() * 2 - 1));
+        }
+        for (let i = 0; i < 22; i++) {
+        arr7.push(10*(Math.random() * 2 - 1));
+        }
+    }
+    //给波动数组第一次赋值
+    createNoise();
+
+    // 心电图纸绘制函数（保持不变）
+    function drawGrid (width, height) {
+    
+        //画制小方格横线
+        for(var i = 0; i <= height; i+=20){
+            ctx1.beginPath();
+            ctx1.moveTo(5, i+5);
+            ctx1.lineTo(width-5, i+5);
+            ctx1.linewidth = 1;
+            ctx1.strokeStyle = "rgba(255, 0, 0)";
+            ctx1.stroke();
+        }
+
+        //画制小方格竖线
+        for(var i = 0; i <= width; i+=20){
+            ctx1.beginPath();
+            ctx1.moveTo(i+5, 5);                   
+            ctx1.lineTo(i+5, height-5);
+            ctx1.linewidth = 1;
+            ctx1.strokeStyle = "rgba(255, 0, 0)";
+            ctx1.stroke();
+        }
+
+        //画制大方格横线
+        for(var i = 0; i <= height; i+=100){
+            ctx1.beginPath();
+            ctx1.moveTo(5, i+5);
+            ctx1.lineTo(width-5, i+5);
+            ctx1.linewidth = 10;
+            ctx1.strokeStyle = "rgba(255, 0, 0)";
+            ctx1.stroke();
+        }
+
+        //画制大方格竖线
+        for(var i = 0; i <= width; i+=100){
+            ctx1.beginPath();
+            ctx1.moveTo(i+5, 5);
+            ctx1.lineTo(i+5, height-5);
+            ctx1.linewidth = 10;
+            ctx1.strokeStyle = "rgba(255, 0, 0)";
+            ctx1.stroke();
+        }
+
+        //构建正常坐标系,以左边框中点为坐标系原点,同时翻转坐标轴
+        ctx1.translate(5, 205);
+        ctx1.scale(1, -1);
+    }
+
+    // 心电图绘制函数
+    function drawECG() {
+        ctx1.beginPath();
+    
+        // 取模实现无限循环并给波动数组赋值
+        if(offset >= (6000 - canvas_ECG.width)){
+            offset = offset - 6000 + canvas_ECG.width;
+            createNoise();
+        }
+        
+        // 绘制二十幅连续的心电波形
+        for(let segment = 0; segment < 20; segment++) {
+            const i = -offset + segment * 300;
+            
+            // P波（心房激动）
+            ctx1.moveTo(i, 0);
+            ctx1.quadraticCurveTo(i+20+arr2[noise2], 45+arr2[noise2+1], i+40, 0);
+            noise2 += 1;
+
+            // QRS波群（心室激动）
+            ctx1.lineTo(i+50, 0);
+            ctx1.bezierCurveTo(
+                i+60, -100+arr3[noise3],   // 控制点1：模拟Q波下冲
+                i+70+arr4[noise4], 450+10*arr4[noise4+1],    // 控制点2：R波高峰
+                i+95, -30     // 结束点：S波下冲
+            );
+            noise3 += 1;
+            noise4 += 1;
+            
+            // ST段恢复
+            ctx1.quadraticCurveTo(i+100, -70+2*arr5[noise5], i+110+arr5[noise5+1], 0);
+            noise5 += 1;
+        
+            // T波（心室复极）
+            ctx1.lineTo(i+130+arr7[noise7+2], 0);
+            ctx1.bezierCurveTo(
+                i+160+arr6[noise6], -10+arr6[noise6+1],   // 控制点1：T波起点
+                i+170+arr7[noise7], 100+arr7[noise7+1],    // 控制点2：T波高峰
+                i+200, 0       // 结束点：回到基线
+            );
+            noise6 += 1;
+            noise7 += 1;
+
+            //.水平线
+            for(var a =1; a<=9; a++){
+                ctx1.lineTo(i+200+10*a, arr1[noise1]);
+                noise1 += 1;
+            }
+            ctx1.lineTo(i+300, 0);
+        }
+        ctx1.strokeStyle = "black";
+        ctx1.stroke();
+    }
+   
+    // 动画循环函数
+    function animate() {
+        //清空计数器;
+        noise1 = 0;
+        noise2 = 0;
+        noise3 = 0;
+        noise4 = 0;
+        noise5 = 0;
+        noise6 = 0;
+        noise7 = 0;
+
+        // 1. 清空画布（通过重置画布尺寸）
+        canvas_ECG.width = canvas_ECG.width;
+        
+        // 2. 重绘背景网格
+        drawGrid(canvas_ECG.width, canvas_ECG.height);
+        
+        // 3. 绘制动态心电图
+        drawECG();
+        
+        // 4. 更新偏移量（调整数值可改变速度）
+        offset += 0.2; // 正值使波形向左移动
+
+        // 5. 循环动画
+        animationId = requestAnimationFrame(animate);
+    }
+    
+    // 启动动画
+    animate();
+
+     // 暂停/恢复动画
+     function toggleAnimation() {
+            isPaused = !isPaused; // 切换状态
+            const button = document.getElementById("pauseBtn");
+            button.textContent = isPaused ? "继续打印" : "暂停打印";
+
+            if (!isPaused) {
+            // 如果是恢复状态，重新启动动画
+            animate();
+            } else {
+            // 如果是暂停状态，取消当前帧请求
+            cancelAnimationFrame(animationId);
+             }
+        }
+</script>
+</html>
+                        

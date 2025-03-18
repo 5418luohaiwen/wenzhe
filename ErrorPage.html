@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ErrorPage</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <link rel="stylesheet" href="./style sheet.css">
+    <style>
+        #Error{
+            text-align: center;
+            font-size: 22px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 50%;
+        }
+        span{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <a href="./index.html" class="">
+        <div class="logo">
+            <img src="./Icon/Logo2.jpg" width="60px" alt="玟喆生物">
+            <ul>
+                <li>WZ</li>
+                <li>Biotech</li>
+            </ul>
+        </div>
+    </a>
+    <h1 class="central">
+         内容正在完善中
+    </h1>
+    <div id="Error">
+        抱歉，内容暂时无法访问，<span>5</span>秒后返回
+    </div>
+    <script>
+        var span_ = document.getElementsByTagName('span')[0],
+            counting = 5,
+            timer = setInterval(function(){
+                counting--;
+                span_.textContent = counting;
+                if(counting <= 0){
+                clearInterval(timer);
+                window.history.go(-1);
+                }
+            },1000)
+    </script>
+</body>
+</html>
