@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>心电图分析</title>
+    <title>心电图模拟</title>
     <link rel="icon" type="image/x-icon" href="../../favicon.ico">
     <link rel="stylesheet" href="../../style sheet.css">
 </head>
@@ -22,7 +22,7 @@
         <a href="../Knowledge catalogue.html"><img src="../../Icon/Experiment.jpg" height="78px" alt="返回实验菜单"></a>
     </div>
     <div style="position: absolute; left: 50%; transform: translate(-50%);margin-top: 100px;">
-        <canvas id="ECG" width="910" height="310"></canvas>
+        <canvas id="ECG" width="910" height="310"; style="border: 5px solid pink;"></canvas>
         <button onclick="toggleAnimation()" id="pauseBtn">暂停打印</button>
     </div>
 </body>
@@ -93,7 +93,7 @@
             ctx1.beginPath();
             ctx1.moveTo(5, i+5);
             ctx1.lineTo(width-5, i+5);
-            ctx1.linewidth = 1;
+            ctx1.lineWidth = 1;
             ctx1.strokeStyle = "rgba(255, 0, 0)";
             ctx1.stroke();
         }
@@ -103,7 +103,7 @@
             ctx1.beginPath();
             ctx1.moveTo(i+5, 5);                   
             ctx1.lineTo(i+5, height-5);
-            ctx1.linewidth = 1;
+            ctx1.lineWidth = 1;
             ctx1.strokeStyle = "rgba(255, 0, 0)";
             ctx1.stroke();
         }
@@ -113,7 +113,7 @@
             ctx1.beginPath();
             ctx1.moveTo(5, i+5);
             ctx1.lineTo(width-5, i+5);
-            ctx1.linewidth = 10;
+            ctx1.lineWidth = 3;
             ctx1.strokeStyle = "rgba(255, 0, 0)";
             ctx1.stroke();
         }
@@ -123,7 +123,7 @@
             ctx1.beginPath();
             ctx1.moveTo(i+5, 5);
             ctx1.lineTo(i+5, height-5);
-            ctx1.linewidth = 10;
+            ctx1.lineWidth = 3;
             ctx1.strokeStyle = "rgba(255, 0, 0)";
             ctx1.stroke();
         }
@@ -184,6 +184,7 @@
             ctx1.lineTo(i+300, 0);
         }
         ctx1.strokeStyle = "black";
+        ctx1.lineWidth = 1.5;
         ctx1.stroke();
     }
    
