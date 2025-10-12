@@ -226,9 +226,9 @@ table{
     margin-top: 20px;
     margin-bottom: 20px;
 }
-table caption
-{
-   margin-bottom: 10px;
+table caption{
+    margin-bottom: 10px;
+    color: grey;
 }
 table td{
     border: 1px solid #ddd;
@@ -262,4 +262,5 @@ footer{
 #footer1 a:hover{
     color: black;
 }
+
 
