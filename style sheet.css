@@ -219,6 +219,24 @@ a{
     color: black;
     cursor: pointer;
 }
+table{
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+table caption
+{
+   margin-bottom: 10px;
+}
+table td{
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+    width: 33.33%; /* 假设有3列，每列33.33%宽度 */
+    word-wrap: break-word; /* 允许长内容换行 */
+}
 footer{
     text-align: center;
     margin-bottom: 0px;
@@ -227,7 +245,6 @@ footer{
     padding-bottom: 10px;
     padding-top: 20px;
     margin-top: 50px;
-    
 }
 #footer1{
     text-align: center;
@@ -245,3 +262,4 @@ footer{
 #footer1 a:hover{
     color: black;
 }
+
