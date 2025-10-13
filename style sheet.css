@@ -226,9 +226,8 @@ table{
     margin-top: 20px;
     margin-bottom: 20px;
 }
-table caption
-{
-   margin-bottom: 10px;
+table caption{
+    margin-bottom: 10px;
 }
 table td{
     border: 1px solid #ddd;
@@ -245,7 +244,6 @@ footer{
     padding-bottom: 10px;
     padding-top: 20px;
     margin-top: 50px;
-    
 }
 #footer1{
     text-align: center;
@@ -263,3 +261,7 @@ footer{
 #footer1 a:hover{
     color: black;
 }
+
+
+
+
