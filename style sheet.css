@@ -88,6 +88,11 @@ h3{
     text-align: center; 
     text-indent: 0em;
 }
+.Chinese{
+    display: inline-block;
+    width: 200px; /* 固定宽度 */
+    text-align: left;
+}
 .video-container {
     position: relative;
     margin-top: 40px;
