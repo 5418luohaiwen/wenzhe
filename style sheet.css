@@ -161,9 +161,6 @@ pointer-events: none;
     font-size: 30px;
     color:grey;
 }
-#myCanvas{
-    
-}
 #selection{
     list-style: none;
     position: relative;
