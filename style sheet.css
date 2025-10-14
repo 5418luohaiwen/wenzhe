@@ -1,8 +1,8 @@
-body{
+html, body{
     margin: 0;
     padding: 0;
-    /* min-height: 100vh; */
     user-select: none;
+    min-width: 100%;
 }
 .logo{
     position: absolute;
@@ -131,8 +131,8 @@ h3{
     z-index: 1;
 }
 .hide-cover {
-opacity: 0;
-pointer-events: none;
+    opacity: 0;
+    pointer-events: none;
 }
 .enlarge{
     text-align: center;
@@ -140,6 +140,10 @@ pointer-events: none;
 .enlarge img {
     transition: width 0.3s ease-in-out; /* 宽度变化时添加过渡动画 */
     cursor: pointer;
+}
+#container{
+    position: relative;
+    height: 1px;
 }
 #timeElement{
     position: absolute;
@@ -169,36 +173,27 @@ pointer-events: none;
 #selection{
     list-style: none;
     position: relative;
-    /* background-color: rgb(131, 44, 203); */
     width: auto;
     padding-bottom: 300px;
     text-align: center; 
 }
-#study{
+#study, #experiment{
     width: 320px;
     height: 140px;
     padding-top: 60px;
     position: absolute;
     left: 50%;
-    transform: translate(-130%);
     font-size: 30px;                                                                         
     color: gray;
     border-radius: 1rem;
     background-color: hsla(0, 0%, 100%, .5);
     box-shadow: 0 0 0 1px #f1f5f9, 0 2px 4px rgba(0, 0, 0, .05), 0 12px 24px rgba(0, 0, 0, .05);
 }
+#study{
+    transform: translate(-130%);
+}
 #experiment{
-    width: 320px;
-    height: 140px;
-    padding-top: 60px;
-    position: absolute;
-    left: 50%;
     transform: translate(30%);
-    font-size: 30px;
-    color: gray;
-    border-radius: 1rem;
-    background-color: hsla(0, 0%, 100%, .5);
-    box-shadow: 0 0 0 1px #f1f5f9, 0 2px 4px rgba(0, 0, 0, .05), 0 12px 24px rgba(0, 0, 0, .05);
 }
 #experiment:hover,#study:hover{
     color: black;
@@ -206,6 +201,7 @@ pointer-events: none;
 #catalogue{
     margin: 0px auto;
     width: 700px;
+    padding: 0px 40px;
     letter-spacing: 1px;
     box-sizing: border-box;
 }
@@ -246,6 +242,7 @@ footer{
     padding-bottom: 10px;
     padding-top: 20px;
     margin-top: 50px;
+    width: 100%;
 }
 #footer1{
     text-align: center;
@@ -262,6 +259,165 @@ footer{
 }
 #footer1 a:hover{
     color: black;
+}
+/* 移动端适配 */
+@media (max-width: 850px) {
+    #study, #experiment {
+        position: relative; /* 改为相对定位 */
+        left: auto; /* 清除left定位 */
+        transform: none; /* 清除transform */
+        width: 80%; /* 使用百分比宽度 */
+        max-width: 320px; /* 限制最大宽度 */
+        margin: 20px auto; /* 上下间距20px，左右自动居中 */
+        display: block; /* 确保块级显示 */
+    }
+    #selection {
+        padding-bottom: 100px; /* 减少底部padding */
+    }
+    h1.central {
+        font-size: 17px;
+    }
+    .title {
+        font-size: 17px;
+    }
+    #catalogue {
+        width: 100% !important;
+        max-width: none;
+        padding: 0px 20px !important;
+        margin: 0 auto;
+        background: white;
+        border-radius: 0;
+        box-shadow: none;
+        min-height: calc(100vh - 200px);
+    }
+    #catalogue p {
+        margin: 15px 0;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #ffecd2;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    #catalogue p:hover {
+        background: #fff5eb;
+        transform: translateX(5px);
+    }
+    /* 中文标题 - 不再固定宽度 */
+    .Chinese {
+        display: block;
+        width: auto !important;
+        text-align: left;
+        font-weight: bold;
+        font-size: 16px;
+        color: #333;
+    }
+    /* 英文内容 - 确保在一行显示 */
+    #catalogue a {
+        font-size: 16px;
+        display: block;
+        padding: 0;
+        line-height: 1.4;
+        text-decoration: none;
+        color: #555;
+    }
+    /* 确保英文不换行，除非必要 */
+    #catalogue a {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    /* 对于超长英文标题，在小屏幕上允许换行 */
+    @media (max-width: 480px) {
+        #catalogue a {
+            white-space: normal;
+            overflow: visible;
+            text-overflow: clip;
+        }
+    }
+    #catalogue h3 {
+        font-size: 20px;
+        margin: 30px 0 15px 0;
+        padding: 0 10px;
+    }
+    #catalogue hr {
+        margin: 15px 10px;
+    }
+     .title a img {
+        height: 50px !important;
+        width: auto !important;
+    }
+    /* 内容区域响应式 */
+    .content {
+        width: 100% !important;
+        max-width: none;
+        margin: 0 auto !important;
+        padding: 25px 20px !important;
+        border: none !important;
+        border-radius: 0 !important;
+        background: white;
+        box-shadow: none;
+    }
+    /* 段落样式优化 */
+    .content p {
+        font-size: 16px;
+        line-height: 1.6;
+        margin: 20px 0;
+        text-align: justify;
+    }
+    .content p strong {
+        color: #333;
+        font-size: 17px;
+    }
+    /* 图片响应式 */
+    .content img {
+        max-width: 100% !important;
+        height: auto !important;
+        display: block;
+        margin: 0 auto;
+    }
+    /* 视频容器响应式 */
+    .video-container {
+        position: relative;
+        margin-top: 30px;
+        transform: none !important;
+        left: auto !important;
+        padding-bottom: 56.25%; /* 16:9 宽高比 */
+        width: 100% !important;
+        max-width: none;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .video-container video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 8px;
+    }
+    .video-container .video-cover {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        font-family: 'Microsoft YaHei', sans-serif;
+        font-size: 1.5rem !important;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: 0.3s;
+        z-index: 1;
+        border-radius: 8px;
+    }
 }
 
 
