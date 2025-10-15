@@ -262,28 +262,47 @@ footer{
 }
 /* 移动端适配 */
 @media (max-width: 850px) {
-    #study, #experiment {
-        position: relative; /* 改为相对定位 */
-        left: auto; /* 清除left定位 */
-        transform: none; /* 清除transform */
-        width: 80%; /* 使用百分比宽度 */
-        max-width: 320px; /* 限制最大宽度 */
-        margin: 20px auto; /* 上下间距20px，左右自动居中 */
-        display: block; /* 确保块级显示 */
+   #selection {
+        list-style: none;
+        width: 100vw; 
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        left: 0;
     }
-    #selection {
-        padding-bottom: 100px; /* 减少底部padding */
+    #study, #experiment {
+        position: relative;
+        width: 60vw;
+        max-width: 312px;
+        margin: 0 0 60px;
+        display: flex; /* 改为 flex 布局 */
+        flex-direction: column; /* 垂直排列 */
+        justify-content: center; /* 垂直居中 */
+        align-items: center; /* 水平居中 */
+        padding: 20px; /* 调整内边距 */
+        height: 120px;
+        font-size: 24px;
+        box-sizing: border-box;
+        left: 0;
+        transform: none;
+    }
+    #footer1{
+        margin-top: 0px;
     }
     h1.central {
         font-size: 17px;
     }
     .title {
-        font-size: 17px;
+        font-size: 20px;
+        padding-left: 80px;
     }
     #catalogue {
-        width: 100% !important;
+        width: 100%;
         max-width: none;
-        padding: 0px 20px !important;
+        padding: 0px 20px;
         margin: 0 auto;
         background: white;
         border-radius: 0;
