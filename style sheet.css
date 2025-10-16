@@ -2,6 +2,11 @@ html, body{
     margin: 0;
     padding: 0;
     user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-tap-highlight-color: transparent;
     min-width: 100%;
 }
  /* Loading动画样式 */
