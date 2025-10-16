@@ -293,7 +293,8 @@ footer{
         margin-top: 0px;
     }
     h1.central {
-        font-size: 17px;
+        font-size: 20px;
+        padding-left: 80px;
     }
     .title {
         font-size: 20px;
