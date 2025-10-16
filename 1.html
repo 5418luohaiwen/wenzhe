@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>优雅悬浮Loading动画（仅首次加载）</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #fefaf0; /* 奶油色背景 */
+            color: #5a4c3e;
+            min-height: 100vh;
+            padding: 20px;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        
+        /* 页面内容样式 */
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+            background: rgba(255, 253, 248, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #8b7355;
+            font-weight: 300;
+            font-size: 2.5em;
+        }
+        
+        .directory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .category {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+            transition: transform 0.3s ease;
+        }
+        
+        .category:hover {
+            transform: translateY(-5px);
+        }
+        
+        .category h2 {
+            color: #8b7355;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            font-weight: 400;
+            border-bottom: 1px solid rgba(139, 115, 85, 0.2);
+            padding-bottom: 10px;
+        }
+        
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .link-item {
+            color: #7a6852;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            border-left: 3px solid #d4c5b2;
+        }
+        
+        .link-item:hover {
+            background: rgba(255, 255, 255, 1);
+            color: #5a4c3e;
+            border-left-color: #8b7355;
+        }
+        
+        /* Loading动画样式 */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(254, 250, 240, 0.95); /* 半透明奶油色遮罩 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        .loading-container {
+            text-align: center;
+            max-width: 400px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+        
+        .loading-title {
+            font-size: 1.8em;
+            color: #8b7355;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+        
+        .loading-subtitle {
+            color: #a08c70;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        /* 旋转圆环动画 */
+        .spinner {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 30px;
+            border: 5px solid rgba(210, 200, 190, 0.3);
+            border-top: 5px solid #8b7355;
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 进度条 */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(210, 200, 190, 0.3);
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #8b7355;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        
+        .loading-text {
+            color: #a08c70;
+            font-size: 0.9em;
+        }
+        
+        /* 加载完成后隐藏 */
+        .loaded #loading-overlay {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        /* 首次访问标记 */
+        .first-visit-message {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(139, 115, 85, 0.1);
+            border-radius: 10px;
+            color: #8b7355;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading遮罩层 -->
+    <div id="loading-overlay">
+        <div class="loading-container">
+            <div class="spinner"></div>
+            <h2 class="loading-title">欢迎访问</h2>
+            <p class="loading-subtitle">首次加载，请稍候...</p>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            
+            <p class="loading-text" id="loading-text">初始化系统...</p>
+        </div>
+    </div>
+    
+    <!-- 页面内容 -->
+    <div class="content">
+        <h1>实验项目目录</h1>
+        
+        <!-- 首次访问提示 -->
+        <div id="first-visit-message" class="first-visit-message" style="display: none;">
+            欢迎首次访问！下次回来时将直接显示内容。
+        </div>
+        
+        <div class="directory-grid">
+            <div class="category">
+                <h2>前端技术</h2>
+                <div class="links">
+                    <a href="#" class="link-item">React组件开发与优化</a>
+                    <a href="#" class="link-item">Vue 3 Composition API实践</a>
+                    <a href="#" class="link-item">Canvas动画与图形处理</a>
+                    <a href="#" class="link-item">WebGL数据可视化应用</a>
+                    <a href="#" class="link-item">TypeScript工程化实践</a>
+                </div>
+            </div>
+            
+            <div class="category">
+                <h2>后端架构</h2>
+                <div class="links">
+                    <a href="#" class="link-item">Node.js微服务架构设计</a>
+                    <a href="#" class="link-item">Python数据处理与分析管道</a>
+                    <a href="#" class="link-item">数据库性能优化与调优</a>
+                    <a href="#" class="link-item">RESTful API设计规范与最佳实践</a>
+                    <a href="#" class="link-item">容器化部署与持续集成</a>
+                </div>
+            </div>
+            
+            <div class="category">
+                <h2>工具开发</h2>
+                <div class="links">
+                    <a href="#" class="link-item">自动化部署与运维脚本</a>
+                    <a href="#" class="link-item">代码生成器与脚手架工具</a>
+                    <a href="#" class="link-item">性能监控与异常追踪系统</a>
+                    <a href="#" class="link-item">文档自动化与知识管理</a>
+                    <a href="#" class="link-item">开发环境配置与优化</a>
+                </div>
+            </div>
+            
+            <div class="category">
+                <h2>算法研究</h2>
+                <div class="links">
+                    <a href="#" class="link-item">机器学习算法实现</a>
+                    <a href="#" class="link-item">数据结构与算法优化</a>
+                    <a href="#" class="link-item">图像处理算法研究</a>
+                    <a href="#" class="link-item">自然语言处理应用</a>
+                    <a href="#" class="link-item">分布式算法设计</a>
+                </div>
+            </div>
+            
+            <div class="category">
+                <h2>移动开发</h2>
+                <div class="links">
+                    <a href="#" class="link-item">React Native跨平台开发</a>
+                    <a href="#" class="link-item">Flutter应用开发实践</a>
+                    <a href="#" class="link-item">原生Android应用优化</a>
+                    <a href="#" class="link-item">iOS应用性能调优</a>
+                    <a href="#" class="link-item">PWA渐进式Web应用</a>
+                </div>
+            </div>
+            
+            <div class="category">
+                <h2>设计系统</h2>
+                <div class="links">
+                    <a href="#" class="link-item">设计语言与组件库构建</a>
+                    <a href="#" class="link-item">用户体验研究与优化</a>
+                    <a href="#" class="link-item">交互动效设计与实现</a>
+                    <a href="#" class="link-item">无障碍访问性设计</a>
+                    <a href="#" class="link-item">设计工具开发与集成</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 检查是否是首次访问
+        function isFirstVisit() {
+            // 检查sessionStorage中是否有访问记录
+            if (!sessionStorage.getItem('hasVisited')) {
+                // 没有记录，说明是首次访问
+                sessionStorage.setItem('hasVisited', 'true');
+                return true;
+            }
+            // 有记录，说明不是首次访问
+            return false;
+        }
+
+        // 页面加载逻辑
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const progressBar = document.getElementById('progress-bar');
+            const loadingText = document.getElementById('loading-text');
+            const firstVisitMessage = document.getElementById('first-visit-message');
+            
+            // 检查是否是首次访问
+            if (isFirstVisit()) {
+                // 首次访问 - 显示加载动画
+                loadingOverlay.style.display = 'flex';
+                firstVisitMessage.style.display = 'block';
+                
+                // 模拟加载步骤和进度
+                const loadingSteps = [
+                    { text: "初始化系统...", progress: 10 },
+                    { text: "加载核心组件...", progress: 25 },
+                    { text: "解析配置文件...", progress: 40 },
+                    { text: "初始化数据模型...", progress: 55 },
+                    { text: "加载UI组件...", progress: 70 },
+                    { text: "渲染页面内容...", progress: 85 },
+                    { text: "完成最终检查...", progress: 95 },
+                    { text: "准备就绪！", progress: 100 }
+                ];
+                
+                let currentStep = 0;
+                
+                // 更新进度条和文本
+                function updateProgress() {
+                    if (currentStep < loadingSteps.length) {
+                        const step = loadingSteps[currentStep];
+                        progressBar.style.width = step.progress + '%';
+                        loadingText.textContent = step.text;
+                        currentStep++;
+                        
+                        // 随机延迟模拟真实加载过程
+                        const delay = Math.random() * 500 + 200;
+                        setTimeout(updateProgress, delay);
+                    } else {
+                        // 所有步骤完成，等待一小段时间后隐藏loading
+                        setTimeout(function() {
+                            loadingOverlay.style.opacity = '0';
+                            loadingOverlay.style.visibility = 'hidden';
+                            document.body.style.opacity = '1'; // 确保内容显示
+                        }, 500);
+                    }
+                }
+                
+                // 开始加载过程
+                setTimeout(updateProgress, 800);
+                
+                // 添加一个安全机制：最多8秒后强制隐藏loading
+                setTimeout(function() {
+                    loadingOverlay.style.opacity = '0';
+                    loadingOverlay.style.visibility = 'hidden';
+                    document.body.style.opacity = '1'; // 确保内容显示
+                }, 8000);
+            } else {
+                // 非首次访问 - 直接显示内容，不显示加载动画
+                loadingOverlay.style.display = 'none';
+                document.body.style.opacity = '1'; // 立即显示内容
+            }
+        });
+    </script>
+</body>
+</html>

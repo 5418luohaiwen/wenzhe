@@ -1,3 +1,93 @@
+//首次加载动画 
+document.addEventListener('DOMContentLoaded', function() {
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const progressBar = document.getElementById('progress-bar');
+    const loadingText = document.getElementById('loading-text');
+    
+    // 检查是否是首次访问
+    if (!sessionStorage.getItem('pageLoaded')) {
+        // 首次访问 - 显示加载动画
+        
+        let pageFullyLoaded = false;
+        const startTime = Date.now();
+        const maxDuration = 10000; // 10秒最大持续时间
+        
+        // 更新进度条和文本
+        function updateProgress() {
+            const elapsed = Date.now() - startTime;
+            const progressPercent = Math.min(95, (elapsed / maxDuration) * 100);
+            
+            progressBar.style.width = progressPercent + '%';
+            
+            // 动态更新loading文本
+            const loadingStates = [
+                { threshold: 12.5, text: "loading.." },
+                { threshold: 25, text: "loading..." },
+                { threshold: 37.5, text: "loading." },
+                { threshold: 50, text: "loading..." },
+                { threshold: 62.5, text: "loading." },
+                { threshold: 75, text: "loading.." },
+                { threshold: 87.5, text: "loading..." },
+                { threshold: 95, text: "准备就绪！" }
+            ];
+            
+            // 根据进度选择对应的文本
+            for (let i = loadingStates.length - 1; i >= 0; i--) {
+                if (progressPercent >= loadingStates[i].threshold) {
+                    loadingText.textContent = loadingStates[i].text;
+                    break;
+                }
+            }
+            
+            // 如果页面还未加载完成，继续更新进度
+            if (!pageFullyLoaded && elapsed < maxDuration) {
+                requestAnimationFrame(updateProgress);
+            } else if (pageFullyLoaded) {
+                // 页面加载完成，立即完成进度条
+                completeLoading();
+            }
+        }
+        
+        // 完成加载并隐藏界面
+        function completeLoading() {
+            progressBar.style.width = '100%';
+            loadingText.textContent = "准备就绪！";
+            
+            setTimeout(function() {
+                loadingOverlay.style.opacity = '0';
+                setTimeout(function() {
+                    loadingOverlay.style.display = 'none';
+                    // 标记页面已加载
+                    sessionStorage.setItem('pageLoaded', 'true');
+                }, 500);
+            }, 500);
+        }
+        
+        // 监听页面完全加载
+        window.addEventListener('load', function() {
+            pageFullyLoaded = true;
+            // 如果进度条已经完成，直接隐藏
+            if (Date.now() - startTime >= maxDuration) {
+                completeLoading();
+            }
+        });
+        
+        // 开始进度更新
+        updateProgress();
+        
+        // 安全机制：10秒后强制完成
+        setTimeout(function() {
+            if (!pageFullyLoaded) {
+                pageFullyLoaded = true;
+                completeLoading();
+            }
+        }, maxDuration);
+    } else {
+        // 非首次访问 - 直接隐藏加载动画
+        loadingOverlay.style.display = 'none';
+    }
+});
+ 
 //网页时间显示
 var timeElement = document.getElementById('timeElement');
 const WEEK_ARRAY = ['星期天','星期一','星期二','星期三','星期四','星期五','星期六'];
