@@ -9,6 +9,7 @@ html, body{
     -webkit-tap-highlight-color: transparent;
     min-width: 100%;
 }
+
  /* Loading动画样式 */
 #loading-overlay {
     position: fixed;
@@ -324,6 +325,220 @@ table td{
     width: 33.33%; /* 假设有3列，每列33.33%宽度 */
     word-wrap: break-word; /* 允许长内容换行 */
 }
+.container {
+    max-width: 100%;
+    margin: 0 auto;
+    background: white;
+    overflow: hidden;
+}
+.main-content {
+    width: 100%;
+    padding: 30px;
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+}
+
+.input-section, .output-section {
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+    box-sizing: border-box;
+}
+
+h2 {
+    color: #4facfe;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+textarea {
+    width: 100%;
+    height: 250px;
+    padding: 5px;
+    border: 2px solid #e1e5e9;
+    border-radius: 10px;
+    background: #f9f9f9;
+    font-size: 16px;
+    resize: vertical;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #4facfe;
+    box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+}
+
+.output-display {
+    width: 100%;
+    height: 250px;
+    padding: 5px;
+    border: 2px solid #e1e5e9;
+    border-radius: 10px;
+    background: #f9f9f9;
+    overflow-y: auto;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.language-info {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    padding: 8px 12px;
+    background: #f0f7ff;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.language-flag {
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    flex: 3;
+}
+
+.api-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 2;
+}
+
+button {
+    padding: 12px 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#translate-btn {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    flex: 1;
+}
+
+#translate-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+}
+
+#paraphrase-btn {
+    background: linear-gradient(135deg, #a8e6cf 0%, #56ab91 100%);
+    color: white;
+    flex: 1;
+}
+
+#paraphrase-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(88, 171, 145, 0.4);
+}
+
+#clear-btn {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+    flex: 1;
+}
+
+#clear-btn:hover {
+    background: #e9ecef;
+}
+
+.api-input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.api-input:focus {
+    outline: none;
+    border-color: #4facfe;
+    box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+}
+
+.api-status {
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.api-valid {
+    background: #d4edda;
+    color: #155724;
+}
+
+.api-invalid {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.loading {
+    display: none;
+    text-align: center;
+    padding: 15px;
+}
+
+.spinner {
+    border: 4px solid rgba(79, 172, 254, 0.3);
+    border-radius: 50%;
+    border-top: 4px solid #4facfe;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.error {
+    color: #e74c3c;
+    background: #fdf0f0;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 15px;
+    display: none;
+}
+
+.success {
+    color: #27ae60;
+    background: #f0fdf4;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 15px;
+    display: none;
+}
+
+.shortcut-hint {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 5px;
+}
 footer{
     text-align: center;
     margin-bottom: 0px;
@@ -352,6 +567,102 @@ footer{
 }
 /* 移动端适配 */
 @media (max-width: 850px) {
+    .main-content {
+        grid-template-columns: 1fr;
+        padding: 15px;
+        gap: 15px;
+    }
+    .shortcut-hint {
+    display: none;
+    }
+
+    .controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .button-group {
+        flex-direction: column;
+        flex: none;
+    }
+
+    .api-group {
+        flex: none;
+    }
+
+    button {
+        padding: 15px;
+        font-size: 16px;
+        width: 100%;
+    }
+
+    textarea {
+        height: 150px;
+        font-size: 16px; /* 防止iOS缩放 */
+    }
+
+    .output-display {
+        height: 150px;
+        font-size: 16px;
+    }
+
+    h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .language-info {
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+
+    .api-input {
+        font-size: 16px; /* 防止iOS缩放 */
+        padding: 12px;
+    }
+
+    .shortcut-hint {
+        font-size: 12px;
+        margin-top: 10px;
+    }
+
+    .loading {
+        padding: 10px;
+    }
+
+    .error, .success {
+        padding: 10px;
+        margin-top: 10px;
+        font-size: 14px;
+    }
+    @media (max-width: 480px) {
+        .shortcut-hint {
+            display: none;
+        }
+
+        .main-content {
+            padding: 10px;
+        }
+        
+        textarea {
+            height: 120px;
+            padding: 12px;
+        }
+
+        .output-display {
+            height: 120px;
+            padding: 12px;
+        }
+
+        button {
+            padding: 14px;
+            font-size: 15px;
+        }
+
+        .api-input {
+            padding: 10px;
+        }
+    }
    #selection {
         list-style: none;
         width: 100vw; 

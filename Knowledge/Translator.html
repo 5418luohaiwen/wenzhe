@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI文字处理</title>
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../style sheet.css">
+     <script src="../JS/AI.JS" defer></script>
+    <style>
+         *, *::before, *::after {
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="">
+        <div class="logo">
+            <img src="../Icon/Logo2.jpg" width="60px" alt="玟喆生物">
+            <ul>
+                <li>WZ</li>
+                <li>Biotech</li>
+            </ul>
+        </div>
+    </a>
+    <div class="title">
+        AI文字处理
+        <a href="./Knowledge catalogue.html"><img src="../Icon/Experiment.jpg" height="78px" alt="返回实验菜单"></a>
+    </div>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="input-section">
+                <h2>输入文本</h2>
+                <textarea id="input-text" placeholder="请输入中文或英文文本，系统将自动识别并翻译..."></textarea>
+                <div id="input-language" class="language-info">
+                    <span class="language-flag">🌐</span>
+                    <span id="input-lang-text">等待检测输入语言...</span>
+                </div>
+                <div class="controls">
+                    <div class="button-group">
+                        <button id="translate-btn">自动翻译</button>
+                        <button id="paraphrase-btn">学术转述</button>
+                        <button id="clear-btn">清空</button>
+                    </div>
+                    <div class="api-group">
+                        <input type="password" id="api-key-input" class="api-input" placeholder="API密钥">
+                        <span id="api-status" class="api-status api-invalid">未设置</span>
+                    </div>
+                </div>
+                <div class="shortcut-hint">提示: 按 Ctrl+Enter 快速翻译，Ctrl+Shift+Enter 快速转述</div>
+            </div>
+
+            <div class="output-section">
+                <h2>处理结果</h2>
+                <div id="output-display" class="output-display">
+                    处理结果将显示在这里...
+                </div>
+                <div id="output-language" class="language-info">
+                    <span class="language-flag">🌐</span>
+                    <span id="output-lang-text">等待处理结果...</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p id="loading-text">正在处理，请稍候...</p>
+        </div>
+
+        <div id="error-message" class="error"></div>
+        <div id="success-message" class="success"></div>
+
+        <footer>
+            Powered by DeepSeek | Response is AI-generated, for reference only<br>
+            如有疑问请发送邮件至<a href="mailto:1065198748@qq.com">1065198748@qq.com</a><br>
+            &copy;上海玟喆生物科技有限公司 <br>
+            地址：上海市青浦区公园路348号7层
+        </footer>
+    </div>
+</body>
+</html>

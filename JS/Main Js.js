@@ -142,4 +142,3 @@ logoContainer.addEventListener('touchstart', (e) => {
     e.stopPropagation();
     qrcode.classList.toggle('active');
 });
-
