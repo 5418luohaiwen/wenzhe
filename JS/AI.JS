@@ -1,8 +1,10 @@
-//AI文字处理
+// 以下内容是基于用户发送的消息的搜索结果:
+// AI文字处理
 // 配置DeepSeek API
 const DEEPSEEK_CONFIG = {
     API_URL: 'https://api.deepseek.com/v1/chat/completions',
-    MODEL: 'deepseek-chat'
+    CHAT_MODEL: 'deepseek-chat',
+    REASONER_MODEL: 'deepseek-reasoner'
 };
 
 // 语言代码映射 - 修复了目标语言逻辑
@@ -157,7 +159,7 @@ function updateLanguageDisplay(sourceLangCode, isParaphrase = false) {
     }
 }
 
-// 翻译函数
+// 翻译函数 - 仍然使用deepseek-chat
 async function translateText() {
     const text = inputText.value.trim();
     
@@ -200,9 +202,9 @@ async function translateText() {
             translationInstruction = `请将以下${sourceLangName}文本准确翻译成${targetLangName}：`;
         }
 
-        // 准备请求数据
+        // 准备请求数据 - 使用deepseek-chat模型
         const requestData = {
-            model: DEEPSEEK_CONFIG.MODEL,
+            model: DEEPSEEK_CONFIG.CHAT_MODEL,
             messages: [
                 {
                     role: "system",
@@ -250,7 +252,7 @@ async function translateText() {
     }
 }
 
-// 转述函数
+// 转述函数 - 改为使用deepseek-reasoner
 async function paraphraseText() {
     const text = inputText.value.trim();
     
@@ -269,7 +271,7 @@ async function paraphraseText() {
     }
 
     // 显示加载状态
-    showLoading('正在转述文本，请稍候...');
+    showLoading('正在使用深度推理模型转述文本，请稍候...');
     hideError();
     hideSuccess();
 
@@ -290,6 +292,8 @@ async function paraphraseText() {
 3. 保持学术严谨性和原文的核心含义
 4. 输出语言保持为中文
 
+请逐步思考并分析原文，然后给出转述结果。
+
 需要转述的文本：`;
         } else {
             paraphraseInstruction = `Please paraphrase the following English text for academic purposes, with these requirements:
@@ -298,16 +302,18 @@ async function paraphraseText() {
 3. Maintain academic rigor and the core meaning of the original
 4. Keep the output in English
 
+Please think step by step and analyze the original text before providing the paraphrased version.
+
 Text to paraphrase:`;
         }
 
-        // 准备请求数据
+        // 准备请求数据 - 使用deepseek-reasoner模型
         const requestData = {
-            model: DEEPSEEK_CONFIG.MODEL,
+            model: DEEPSEEK_CONFIG.REASONER_MODEL,
             messages: [
                 {
                     role: "system",
-                    content: "你是一位专业的学术写作助手，擅长文本转述，能够保留专业术语同时改变表达方式。"
+                    content: "你是一位专业的学术写作助手，擅长文本转述，能够保留专业术语同时改变表达方式。请使用逐步推理来分析文本结构，然后给出高质量的转述结果。"
                 },
                 {
                     role: "user",
@@ -315,7 +321,7 @@ Text to paraphrase:`;
                 }
             ],
             temperature: 0.7, // 转述需要更高的创造性
-            max_tokens: 2000
+            max_tokens: 4000  // 增加token限制以容纳推理过程
         };
 
         // 发送API请求
@@ -338,7 +344,7 @@ Text to paraphrase:`;
         if (data.choices && data.choices.length > 0) {
             const paraphrasedText = data.choices[0].message.content;
             outputDisplay.textContent = paraphrasedText;
-            showSuccess('转述完成！');
+            showSuccess('学术转述完成！(使用深度推理模型)');
         } else {
             throw new Error('API返回的数据格式不正确');
         }

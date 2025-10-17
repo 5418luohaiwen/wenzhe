@@ -325,6 +325,7 @@ table td{
     width: 33.33%; /* 假设有3列，每列33.33%宽度 */
     word-wrap: break-word; /* 允许长内容换行 */
 }
+/* AI文字处理样式 */
 .container {
     max-width: 100%;
     margin: 0 auto;
@@ -333,7 +334,7 @@ table td{
 }
 .main-content {
     width: 100%;
-    padding: 30px;
+    padding: 10px;
     display: grid;
     grid-template-columns: minmax(0,1fr) minmax(0,1fr);
 }
@@ -341,7 +342,7 @@ table td{
 .input-section, .output-section {
     display: flex;
     flex-direction: column;
-    margin: 20px;
+    margin: 10px;
     box-sizing: border-box;
 }
 
