@@ -3,22 +3,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadingOverlay = document.getElementById('loading-overlay');
     const progressBar = document.getElementById('progress-bar');
     const loadingText = document.getElementById('loading-text');
-    
     // 检查是否是首次访问
     if (!sessionStorage.getItem('pageLoaded')) {
         // 首次访问 - 显示加载动画
-        
         let pageFullyLoaded = false;
         const startTime = Date.now();
         const maxDuration = 10000; // 10秒最大持续时间
-        
         // 更新进度条和文本
         function updateProgress() {
             const elapsed = Date.now() - startTime;
             const progressPercent = Math.min(95, (elapsed / maxDuration) * 100);
-            
             progressBar.style.width = progressPercent + '%';
-            
             // 动态更新loading文本
             const loadingStates = [
                 { threshold: 12.5, text: "loading.." },
@@ -30,7 +25,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 { threshold: 87.5, text: "loading..." },
                 { threshold: 95, text: "准备就绪！" }
             ];
-            
             // 根据进度选择对应的文本
             for (let i = loadingStates.length - 1; i >= 0; i--) {
                 if (progressPercent >= loadingStates[i].threshold) {
@@ -38,7 +32,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     break;
                 }
             }
-            
             // 如果页面还未加载完成，继续更新进度
             if (!pageFullyLoaded && elapsed < maxDuration) {
                 requestAnimationFrame(updateProgress);
@@ -47,12 +40,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 completeLoading();
             }
         }
-        
         // 完成加载并隐藏界面
         function completeLoading() {
             progressBar.style.width = '100%';
             loadingText.textContent = "准备就绪！";
-            
+            // 延时隐藏以确保用户看到100%状态
             setTimeout(function() {
                 loadingOverlay.style.opacity = '0';
                 setTimeout(function() {
@@ -62,7 +54,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }, 500);
             }, 500);
         }
-        
         // 监听页面完全加载
         window.addEventListener('load', function() {
             pageFullyLoaded = true;
@@ -71,10 +62,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 completeLoading();
             }
         });
-        
         // 开始进度更新
         updateProgress();
-        
         // 安全机制：10秒后强制完成
         setTimeout(function() {
             if (!pageFullyLoaded) {
