@@ -166,6 +166,14 @@ h3{
     box-sizing: border-box;
     border-radius: 10px;
 }
+sub, sup {
+     font-size: 0.75em; /* 尝试稍大的值 */
+    transform: scale(0.9); /* 使用缩放 */
+    display: inline-block; /* 缩放需要这个 */
+}
+.chemical-formula {
+    white-space: nowrap;
+}
 .central{
     text-align: center; 
     text-indent: 0em;
