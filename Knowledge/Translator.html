@@ -76,7 +76,7 @@
     </div>
 
     <script>
-        // AI文字处理 - 最终版本
+        // AI文字处理 - 最终版本（已修复参数传递问题）
         const CLOUD_FUNCTION_CONFIG = {
             HTTP_URL: 'https://fc-mp-cebc99d5-4fe8-4142-8c86-23b8f6dc1e7c.next.bspapp.com/deepseek-api'
         };
@@ -182,7 +182,7 @@
             }
         }
 
-        // 调用云函数
+        // 调用云函数 - 修复版
         async function callCloudFunction(text, action, sourceLang, targetLang) {
             if (!CLOUD_FUNCTION_CONFIG.HTTP_URL) {
                 throw new Error('云函数URL未配置');
@@ -191,55 +191,34 @@
             console.log('调用云函数:', { text, action, sourceLang, targetLang });
             
             try {
+                // 构建与EMAS调试器相同的请求格式
+                const requestBody = {
+                    text: text,
+                    action: action,
+                    sourceLang: sourceLang,
+                    targetLang: targetLang
+                };
+
+                console.log('发送的请求体:', JSON.stringify(requestBody, null, 2));
+                
                 const response = await fetch(CLOUD_FUNCTION_CONFIG.HTTP_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        text: text,
-                        action: action,
-                        sourceLang: sourceLang,
-                        targetLang: targetLang
-                    })
+                    body: JSON.stringify(requestBody)
                 });
 
                 if (!response.ok) {
-                    throw new Error(`HTTP请求失败: ${response.status}`);
+                    const errorText = await response.text();
+                    throw new Error(`HTTP请求失败: ${response.status} - ${errorText}`);
                 }
 
                 const data = await response.json();
-                console.log('云函数返回:', data);
+                console.log('云函数返回原始数据:', data);
                 
-                // 处理云函数返回格式
-                if (data.statusCode && data.statusCode !== 200) {
-                    let errorMsg = '未知错误';
-                    if (typeof data.body === 'string') {
-                        try {
-                            const errorBody = JSON.parse(data.body);
-                            errorMsg = errorBody.error || data.body;
-                        } catch (e) {
-                            errorMsg = data.body;
-                        }
-                    } else if (data.body && data.body.error) {
-                        errorMsg = data.body.error;
-                    }
-                    throw new Error(errorMsg);
-                }
-                
-                // 解析body字段
-                let resultData;
-                if (typeof data.body === 'string') {
-                    try {
-                        resultData = JSON.parse(data.body);
-                    } catch (e) {
-                        resultData = { result: data.body };
-                    }
-                } else {
-                    resultData = data.body || data;
-                }
-                
-                return resultData;
+                // 直接返回data，因为云函数已经返回了完整的响应结构
+                return data;
 
             } catch (error) {
                 console.error('调用云函数异常:', error);
@@ -266,11 +245,28 @@
                 
                 const result = await callCloudFunction(text, 'translate', sourceLang, targetLang);
                 
-                if (result && result.result) {
+                // 处理云函数返回的格式
+                if (result.body) {
+                    // 如果返回了body字段，需要解析
+                    let bodyData;
+                    if (typeof result.body === 'string') {
+                        bodyData = JSON.parse(result.body);
+                    } else {
+                        bodyData = result.body;
+                    }
+                    
+                    if (bodyData && bodyData.result) {
+                        outputDisplay.textContent = bodyData.result;
+                        showSuccess('翻译完成！');
+                    } else {
+                        throw new Error('返回结果格式错误: ' + JSON.stringify(result));
+                    }
+                } else if (result.result) {
+                    // 如果直接返回了result字段
                     outputDisplay.textContent = result.result;
                     showSuccess('翻译完成！');
                 } else {
-                    throw new Error('返回结果格式错误');
+                    throw new Error('返回结果格式错误: ' + JSON.stringify(result));
                 }
 
             } catch (error) {
@@ -299,11 +295,26 @@
                 
                 const result = await callCloudFunction(text, 'paraphrase', sourceLang, sourceLang);
                 
-                if (result && result.result) {
+                // 处理云函数返回的格式
+                if (result.body) {
+                    let bodyData;
+                    if (typeof result.body === 'string') {
+                        bodyData = JSON.parse(result.body);
+                    } else {
+                        bodyData = result.body;
+                    }
+                    
+                    if (bodyData && bodyData.result) {
+                        outputDisplay.textContent = bodyData.result;
+                        showSuccess('学术转述完成！(使用深度推理模型)');
+                    } else {
+                        throw new Error('返回结果格式错误: ' + JSON.stringify(result));
+                    }
+                } else if (result.result) {
                     outputDisplay.textContent = result.result;
                     showSuccess('学术转述完成！(使用深度推理模型)');
                 } else {
-                    throw new Error('返回结果格式错误');
+                    throw new Error('返回结果格式错误: ' + JSON.stringify(result));
                 }
 
             } catch (error) {
@@ -359,31 +370,44 @@
             hideSuccess();
         });
 
-        inputText.addEventListener('input', function() {
+        // 实时语言检测（防抖处理）
+        let detectTimeout;
+        function handleInputChange() {
+            clearTimeout(detectTimeout);
             const text = inputText.value.trim();
+            
             if (text.length > 1) {
-                const detectedLang = detectLanguage(text);
-                updateLanguageDisplay(detectedLang, false);
+                detectTimeout = setTimeout(() => {
+                    const detectedLang = detectLanguage(text);
+                    updateLanguageDisplay(detectedLang, false);
+                }, 500);
             } else {
                 inputLangText.textContent = '等待检测输入语言...';
                 outputLangText.textContent = '等待处理结果...';
             }
-        });
+        }
 
-        // 快捷键
+        inputText.addEventListener('input', handleInputChange);
+
+        // 快捷键处理
         inputText.addEventListener('keydown', function(e) {
+            // Ctrl+Enter 翻译
             if (e.ctrlKey && e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 translateText();
-            } else if (e.ctrlKey && e.shiftKey && e.key === 'Enter') {
+            }
+            // Ctrl+Shift+Enter 转述
+            else if (e.ctrlKey && e.shiftKey && e.key === 'Enter') {
                 e.preventDefault();
                 paraphraseText();
             }
         });
 
-        // 页面加载
+        // 页面加载完成后
         window.addEventListener('load', function() {
+            // 光标定位到输入框
             inputText.focus();
+            
             console.log('AI文字处理系统已加载，云函数URL:', CLOUD_FUNCTION_CONFIG.HTTP_URL);
         });
     </script>
