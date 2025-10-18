@@ -1,4 +1,3 @@
-// 以下内容是基于用户发送的消息的搜索结果:
 // AI文字处理
 // 配置DeepSeek API
 const DEEPSEEK_CONFIG = {

@@ -6,12 +6,10 @@
     <title>AI文字处理</title>
     <link rel="icon" type="image/x-icon" href="../favicon.ico">
     <link rel="stylesheet" href="../style sheet.css">
-    <script src="../JS/AI.JS" defer></script>
-    <script src="../JS/emas-loader.js"></script>
     <style>
-         *, *::before, *::after {
-            box-sizing: border-box;
-            user-select: text;
+        *, *::before, *::after {
+        box-sizing: border-box;
+        user-select: text;
         }
     </style>
 </head>
@@ -45,10 +43,6 @@
                         <button id="paraphrase-btn">学术转述</button>
                         <button id="clear-btn">清空</button>
                     </div>
-                    <div class="api-group">
-                        <input type="password" id="api-key-input" class="api-input" placeholder="API密钥">
-                        <span id="api-status" class="api-status api-invalid">未设置</span>
-                    </div>
                 </div>
                 <div class="shortcut-hint">提示: 按 Ctrl+Enter 快速翻译，Ctrl+Shift+Enter 快速转述</div>
             </div>
@@ -80,5 +74,318 @@
             地址：上海市青浦区公园路348号7层
         </footer>
     </div>
+
+    <script>
+        // AI文字处理 - 最终版本
+        const CLOUD_FUNCTION_CONFIG = {
+            HTTP_URL: 'https://fc-mp-cebc99d5-4fe8-4142-8c86-23b8f6dc1e7c.next.bspapp.com/deepseek-api'
+        };
+
+        // 语言代码映射
+        const LANGUAGE_MAP = {
+            'en': { 
+                name: '英语', 
+                flag: '🇺🇸', 
+                target: 'zh',
+                targetName: '中文',
+                targetFlag: '🇨🇳'
+            },
+            'zh': { 
+                name: '中文', 
+                flag: '🇨🇳', 
+                target: 'en',
+                targetName: '英语',
+                targetFlag: '🇺🇸'
+            },
+            'ja': { 
+                name: '日语', 
+                flag: '🇯🇵', 
+                target: 'zh',
+                targetName: '中文',
+                targetFlag: '🇨🇳'
+            },
+            'ko': { 
+                name: '韩语', 
+                flag: '🇰🇷', 
+                target: 'zh',
+                targetName: '中文',
+                targetFlag: '🇨🇳'
+            },
+            'fr': { 
+                name: '法语', 
+                flag: '🇫🇷', 
+                target: 'zh',
+                targetName: '中文',
+                targetFlag: '🇨🇳'
+            },
+            'de': { 
+                name: '德语', 
+                flag: '🇩🇪', 
+                target: 'zh',
+                targetName: '中文',
+                targetFlag: '🇨🇳'
+            },
+            'es': { 
+                name: '西班牙语', 
+                flag: '🇪🇸', 
+                target: 'zh',
+                targetName: '中文',
+                targetFlag: '🇨🇳'
+            },
+            'ru': { 
+                name: '俄语', 
+                flag: '🇷🇺', 
+                target: 'zh',
+                targetName: '中文',
+                targetFlag: '🇨🇳'
+            }
+        };
+
+        // DOM元素
+        const inputText = document.getElementById('input-text');
+        const outputDisplay = document.getElementById('output-display');
+        const translateBtn = document.getElementById('translate-btn');
+        const paraphraseBtn = document.getElementById('paraphrase-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const loading = document.getElementById('loading');
+        const loadingText = document.getElementById('loading-text');
+        const errorMessage = document.getElementById('error-message');
+        const successMessage = document.getElementById('success-message');
+        const inputLangText = document.getElementById('input-lang-text');
+        const outputLangText = document.getElementById('output-lang-text');
+
+        // 自动语言检测函数
+        function detectLanguage(text) {
+            if (!text || text.trim().length < 2) return 'en';
+            
+            try {
+                const chineseCharCount = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
+                const totalChars = text.length;
+                return chineseCharCount > totalChars * 0.3 ? 'zh' : 'en';
+            } catch (error) {
+                console.error('语言检测错误:', error);
+                return 'en';
+            }
+        }
+
+        // 更新语言显示
+        function updateLanguageDisplay(sourceLangCode, isParaphrase = false) {
+            const sourceLangInfo = LANGUAGE_MAP[sourceLangCode] || LANGUAGE_MAP['en'];
+            inputLangText.textContent = `检测到: ${sourceLangInfo.flag} ${sourceLangInfo.name}`;
+            
+            if (isParaphrase) {
+                outputLangText.textContent = `转述为: ${sourceLangInfo.flag} ${sourceLangInfo.name}`;
+            } else {
+                const targetLangCode = sourceLangInfo.target;
+                const targetLangInfo = LANGUAGE_MAP[targetLangCode] || LANGUAGE_MAP['zh'];
+                outputLangText.textContent = `翻译为: ${targetLangInfo.flag} ${targetLangInfo.name}`;
+            }
+        }
+
+        // 调用云函数
+        async function callCloudFunction(text, action, sourceLang, targetLang) {
+            if (!CLOUD_FUNCTION_CONFIG.HTTP_URL) {
+                throw new Error('云函数URL未配置');
+            }
+
+            console.log('调用云函数:', { text, action, sourceLang, targetLang });
+            
+            try {
+                const response = await fetch(CLOUD_FUNCTION_CONFIG.HTTP_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        action: action,
+                        sourceLang: sourceLang,
+                        targetLang: targetLang
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP请求失败: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('云函数返回:', data);
+                
+                // 处理云函数返回格式
+                if (data.statusCode && data.statusCode !== 200) {
+                    let errorMsg = '未知错误';
+                    if (typeof data.body === 'string') {
+                        try {
+                            const errorBody = JSON.parse(data.body);
+                            errorMsg = errorBody.error || data.body;
+                        } catch (e) {
+                            errorMsg = data.body;
+                        }
+                    } else if (data.body && data.body.error) {
+                        errorMsg = data.body.error;
+                    }
+                    throw new Error(errorMsg);
+                }
+                
+                // 解析body字段
+                let resultData;
+                if (typeof data.body === 'string') {
+                    try {
+                        resultData = JSON.parse(data.body);
+                    } catch (e) {
+                        resultData = { result: data.body };
+                    }
+                } else {
+                    resultData = data.body || data;
+                }
+                
+                return resultData;
+
+            } catch (error) {
+                console.error('调用云函数异常:', error);
+                throw error;
+            }
+        }
+
+        // 翻译函数
+        async function translateText() {
+            const text = inputText.value.trim();
+            if (!text) {
+                showError('请输入要翻译的文本');
+                return;
+            }
+
+            showLoading('正在检测语言并翻译，请稍候...');
+            hideError();
+            hideSuccess();
+
+            try {
+                const sourceLang = detectLanguage(text);
+                updateLanguageDisplay(sourceLang, false);
+                const targetLang = LANGUAGE_MAP[sourceLang].target;
+                
+                const result = await callCloudFunction(text, 'translate', sourceLang, targetLang);
+                
+                if (result && result.result) {
+                    outputDisplay.textContent = result.result;
+                    showSuccess('翻译完成！');
+                } else {
+                    throw new Error('返回结果格式错误');
+                }
+
+            } catch (error) {
+                console.error('翻译错误:', error);
+                showError('翻译失败: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // 转述函数
+        async function paraphraseText() {
+            const text = inputText.value.trim();
+            if (!text) {
+                showError('请输入要转述的文本');
+                return;
+            }
+
+            showLoading('正在使用深度推理模型转述文本，请稍候...');
+            hideError();
+            hideSuccess();
+
+            try {
+                const sourceLang = detectLanguage(text);
+                updateLanguageDisplay(sourceLang, true);
+                
+                const result = await callCloudFunction(text, 'paraphrase', sourceLang, sourceLang);
+                
+                if (result && result.result) {
+                    outputDisplay.textContent = result.result;
+                    showSuccess('学术转述完成！(使用深度推理模型)');
+                } else {
+                    throw new Error('返回结果格式错误');
+                }
+
+            } catch (error) {
+                console.error('转述错误:', error);
+                showError('转述失败: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // UI控制函数
+        function showLoading(message = '正在处理，请稍候...') {
+            loadingText.textContent = message;
+            loading.style.display = 'block';
+            translateBtn.disabled = true;
+            paraphraseBtn.disabled = true;
+        }
+
+        function hideLoading() {
+            loading.style.display = 'none';
+            translateBtn.disabled = false;
+            paraphraseBtn.disabled = false;
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+
+        function hideError() {
+            errorMessage.style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+            setTimeout(hideSuccess, 3000);
+        }
+
+        function hideSuccess() {
+            successMessage.style.display = 'none';
+        }
+
+        // 事件监听
+        translateBtn.addEventListener('click', translateText);
+        paraphraseBtn.addEventListener('click', paraphraseText);
+        clearBtn.addEventListener('click', function() {
+            inputText.value = '';
+            outputDisplay.textContent = '处理结果将显示在这里...';
+            inputLangText.textContent = '等待检测输入语言...';
+            outputLangText.textContent = '等待处理结果...';
+            hideError();
+            hideSuccess();
+        });
+
+        inputText.addEventListener('input', function() {
+            const text = inputText.value.trim();
+            if (text.length > 1) {
+                const detectedLang = detectLanguage(text);
+                updateLanguageDisplay(detectedLang, false);
+            } else {
+                inputLangText.textContent = '等待检测输入语言...';
+                outputLangText.textContent = '等待处理结果...';
+            }
+        });
+
+        // 快捷键
+        inputText.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                translateText();
+            } else if (e.ctrlKey && e.shiftKey && e.key === 'Enter') {
+                e.preventDefault();
+                paraphraseText();
+            }
+        });
+
+        // 页面加载
+        window.addEventListener('load', function() {
+            inputText.focus();
+            console.log('AI文字处理系统已加载，云函数URL:', CLOUD_FUNCTION_CONFIG.HTTP_URL);
+        });
+    </script>
 </body>
 </html>
